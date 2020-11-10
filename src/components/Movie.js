@@ -1,9 +1,12 @@
 import React from "react";
-import { View, Text, StyleSheet, Image, Pressable } from "react-native";
+import { View, StyleSheet, Image, Pressable } from "react-native";
 
 import { DateTime } from "luxon";
 
 import constants from "../utils/constants";
+
+import { fontsNames } from '../utils/fonts';
+import Text from './TextCustom';
 
 // para cargar imagenes: https://image.tmdb.org/t/p/original/elZ6JCzSEvFOq4gNjNeZsnRFsvj.jpg
 // para cargar imagenes de fondo: https://image.tmdb.org/t/p/original//lA5fOBqTOQBQ1s9lEYYPmNXoYLi.jpg
@@ -38,7 +41,7 @@ const Movie = ({ movie, navigation }) => {
 
       <View style={{ flex: 1, marginLeft: imageMargin }}>
         <View style={styles.titleContainer}>
-          <Text numberOfLines={1} style={styles.title}> {title} </Text>
+          <Text fontFamily="Bold" numberOfLines={1} style={styles.title}> {title} </Text>
           <Text style={styles.votes}> {vote_average} </Text>
         </View>
         <Text style={styles.popularity}> {popularity.toFixed(0)} </Text>
@@ -80,7 +83,7 @@ const styles = StyleSheet.create({
   },
   popularity: {
     borderColor: constants.COLORS.PRIMARY,
-    borderWidth: 1,
+    borderWidth: 0.5,
     width: 40,
     borderRadius: 4,
     textAlign: "center",

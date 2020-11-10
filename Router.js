@@ -33,7 +33,8 @@ const Router = () => {
           name={constants.SCREEN.HOME}
           component={HomeScreen}
           options={{
-            title: "MOVIES",
+            title: "",
+            headerShown: "",
           }}
         />
         <Stack.Screen
