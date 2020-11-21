@@ -1,49 +1,69 @@
-import React, { useEffect } from 'react';
-import {
-	View,
-	Text,
-	SafeAreaView,
-	StyleSheet,
-	FlatList,
-	Platform,
-	ScrollView,
-	Pressable,
-} from 'react-native';
+import React from 'react';
+import { View, Text, Pressable, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-
-import axios from '../utils/axios';
 
 import constants from '../utils/constants';
 
-import Movie from '../components/Movie';
-
 import { fontsNames } from '../utils/fonts';
 
-export const HomeScreen = ({ navigation, route }) => {
-	const [movies, setMovies] = React.useState([]);
+import Movies from '../components/Movies';
 
-	useEffect(() => {
-		axios
-			.get(`movie/popular?api_key=${constants.API_KEY}&language=es-ES`)
-			.then((res) => {
-				setMovies(res.data.results);
-			})
-			.catch((err) => console.log(err));
-	}, [setMovies]);
+const ActiveIndicator = () => {
+	return (
+		<View style={styles.indicatorContainer}>
+			<View style={[styles.indicator]}></View>
+			<View style={[styles.indicator, styles.indicatorMin]}></View>
+		</View>
+	);
+};
+
+export const HomeScreen = ({ navigation, route }) => {
+	const [activeTab, setActiveTab] = React.useState('popular');
 
 	return (
 		<SafeAreaView style={styles.container}>
 			<View style={styles.titleContainer}>
-				<Text style={styles.title}>Movies</Text>
+				<Text style={styles.title}>MOVIES</Text>
 				<Feather name="search" size={18} color="black" />
 			</View>
-			<FlatList
-				style={styles.list}
-				data={movies}
-				renderItem={({ item }) => <Movie movie={item} navigation={navigation} />}
-				keyExtractor={(item) => `${item.id}`}
-				contentInset={{ bottom: 80, top: 0 }}
-			/>
+
+			<ScrollView style={styles.tabstop} horizontal={true}>
+				<Pressable style={styles.tab} onPress={() => setActiveTab('popular')}>
+					<Text
+						style={[
+							styles.tabText,
+							{
+								color:
+									activeTab === 'popular'
+										? constants.COLORS.TEXT_COLOR
+										: constants.COLORS.TEXT_COLOR2,
+							},
+						]}
+					>
+						Now Popular
+					</Text>
+					{activeTab === 'popular' && <ActiveIndicator />}
+				</Pressable>
+				<Pressable style={styles.tab} onPress={() => setActiveTab('upcoming')}>
+					<Text
+						style={[
+							styles.tabText,
+							{
+								color:
+									activeTab === 'upcoming'
+										? constants.COLORS.TEXT_COLOR
+										: constants.COLORS.TEXT_COLOR2,
+							},
+						]}
+					>
+						The Upcoming
+					</Text>
+					{activeTab === 'upcoming' && <ActiveIndicator />}
+				</Pressable>
+			</ScrollView>
+
+			{activeTab === 'popular' && <Movies type="popular" {...{ navigation }} />}
+			{activeTab === 'upcoming' && <Movies type="upcoming" {...{ navigation }} />}
 		</SafeAreaView>
 	);
 };
@@ -51,22 +71,46 @@ export const HomeScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
-		backgroundColor: constants.COLORS.LIGHT_GRAY,
-		marginTop: Platform.OS !== 'ios' ? 0	 : 0,
-	},
-	list: {
-		paddingHorizontal: 25,
+		backgroundColor: constants.COLORS.LIGHT_GRAY2,
+		marginTop: Platform.OS !== 'ios' ? 20 : 0,
 	},
 	titleContainer: {
 		paddingHorizontal: 25,
 		flexDirection: 'row',
 		justifyContent: 'space-between',
 		alignItems: 'center',
-		marginTop: 12,
+		marginTop: 8,
 		marginBottom: 8,
 	},
 	title: {
 		fontFamily: fontsNames.FANCY,
 		fontSize: 24,
+	},
+	tabstop: {
+		marginVertical: 8,
+		marginLeft: 25,
+	},
+	tab: {
+		marginRight: 25,
+	},
+	tabText: {
+		fontSize: 14,
+		fontFamily: fontsNames.BOLD,
+	},
+	indicatorContainer: {
+		flexDirection: 'row',
+		marginVertical: 5,
+		alignItems: 'center',
+		justifyContent: 'center',
+	},
+	indicator: {
+		height: 3,
+		width: 20,
+		borderRadius: 10,
+		backgroundColor: constants.COLORS.WARNING,
+	},
+	indicatorMin: {
+		width: 5,
+		marginLeft: 5,
 	},
 });
